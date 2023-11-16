@@ -1,8 +1,3 @@
-import find_bibs as bf
-import bibtagger as bt
-import cv2
-import numpy as np
-
 class BibTaggerResult(object):
     def __init__(self):
         self.faces = 0

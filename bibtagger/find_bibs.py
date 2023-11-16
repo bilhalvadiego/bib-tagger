@@ -1,6 +1,3 @@
-import cv2
-import numpy as np
-
 DEBUG=False
 
 #
@@ -142,7 +139,7 @@ def find_blobs(img):
      
     # Detect blobs.
     keypoints = detector.detect(img)
-    print keypoints
+    print(keypoints)
       
     # Draw detected blobs as red circles.
     # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
@@ -159,10 +156,10 @@ def find_keypoints(img):
   img2 = cv2.drawKeypoints(img, kp, color=(255,0,0))
 
   # Print all default params
-  print "Threshold: ", fast.getInt('threshold')
-  print "nonmaxSuppression: ", fast.getBool('nonmaxSuppression')
-  #print "neighborhood: ", fast.getInt('type')
-  print "Total Keypoints with nonmaxSuppression: ", len(kp)
+  print("Threshold: ", fast.getInt('threshold'))
+  print("nonmaxSuppression: ", fast.getBool('nonmaxSuppression'))
+  #print("neighborhood: ", fast.getInt('type')
+  print("Total Keypoints with nonmaxSuppression: ", len(kp))
 
   cv2.imwrite('fast_true.png',img2)
 

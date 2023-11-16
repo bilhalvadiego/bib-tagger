@@ -1,26 +1,3 @@
-#find bibs, specific or general, using feature detection
-
-import numpy as np
-import scipy as sp
-import scipy.signal
-import cv2
-
-# Import ORB as SIFT to avoid confusion.
-try:
-  from cv2 import ORB as SIFT
-except ImportError:
-  try:
-    from cv2 import SIFT
-  except ImportError:
-    try:
-      SIFT = cv2.ORB_create
-    except:
-      raise AttributeError("Version of OpenCV(%s) does not have SIFT / ORB."
-                      % cv2.__version__)
-
-
-# From Assignment 7 - Feature Detection and Matching
-
 def findMatchesBetweenImages(image_1, image_2):
   """ Return the top 10 list of matches between two input images.
 
