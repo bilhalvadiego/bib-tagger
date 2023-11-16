@@ -1,15 +1,3 @@
-import cv2
-import os
-import numpy as np
-import bodydetector as bt
-import find_bibs as bf
-from bib import Bib
-from bibtaggerresult import BibTaggerResult
-
-from swt import SWTScrubber
-import ocr
-import re
-
 def findBibs(image,outdir):
 
     #prep out dir
@@ -22,7 +10,7 @@ def findBibs(image,outdir):
 
     bodyboxes = bt.getbodyboxes(image)
 
-    print "Found {} bodies!".format(len(bodyboxes))
+    print("Found {} bodies!".format(len(bodyboxes)))
 
     #draw bodyboxes on image, and write out
     imagecopy = np.copy(image)
@@ -72,7 +60,7 @@ def findBibs(image,outdir):
                 swtsuccesses += 1
 
         except Bib:
-            print "SWT failed"
+            print("SWT failed")
 
     result = BibTaggerResult()
     result.faces = len(bodyboxes)
@@ -80,7 +68,7 @@ def findBibs(image,outdir):
     result.swt = swtsuccesses
     result.bib_numbers = [ bib.number for bib in bibs if bib.has_bib_number() ]
 
-    print result
+    print(result)
 
     return result
 
@@ -96,7 +84,7 @@ def run_swt_and_ocr(image, i, name, writefiles, outdir):
         SWTpath = os.path.join(outdir,"{}_3SWTimage_{}.jpg".format(i, name))
         cv2.imwrite(SWTpath, (255-(255*SWTbib)))
         bib_number = ocr.getOcr(SWTpath)
-        print bib_number
+        print(bib_number)
         bib_number = re.sub("[^0-9]", "", bib_number)
 
     return bib_number

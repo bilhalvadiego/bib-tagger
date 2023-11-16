@@ -1,8 +1,41 @@
+from __future__ import division
+
 import os
 import cv2
 import pprint
+import numpy as np
 
 import bibtagger.bibtagger as bt
+import bibtagger.bodydetector as bt
+import bibtagger.find_bibs as bf
+from bibtagger.bib import Bib
+from bibtagger.bibtaggerresult import BibTaggerResult
+
+from bibtagger.swt import SWTScrubber
+import bibtagger.ocr
+import re
+
+import scipy as sp
+import scipy.signal
+
+# Import ORB as SIFT to avoid confusion.
+try:
+  from cv2 import ORB as SIFT
+except ImportError:
+  try:
+    from cv2 import SIFT
+  except ImportError:
+    try:
+      SIFT = cv2.ORB_create
+    except:
+      raise AttributeError("Version of OpenCV(%s) does not have SIFT / ORB."
+                      % cv2.__version__)
+      
+from collections import defaultdict
+
+import math
+
+import scipy.sparse, scipy.spatial
 
 #runs the pipeline on all photos
 if __name__ == "__main__":
@@ -14,7 +47,7 @@ if __name__ == "__main__":
     if not os.path.exists(outfolder):
         os.mkdir(outfolder)
 
-    print 'Searching for image folders in {} folder'.format(sourcefolder)
+    print('Searching for image folders in {} folder'.format(sourcefolder))
 
     # Extensions recognized by opencv
     exts = ['.bmp', '.pbm', '.pgm', '.ppm', '.sr', '.ras', '.jpeg', '.jpg',
@@ -24,7 +57,7 @@ if __name__ == "__main__":
     results = []
   # For every image in the source directory
     for racephoto_dir in os.listdir(sourcefolder):
-        print "Collecting images from directory {}".format(racephoto_dir)
+        print("Collecting images from directory {}".format(racephoto_dir))
         img_list = []
         img_namelist = []
         filenames = sorted(os.listdir(os.path.join(sourcefolder, racephoto_dir)))
@@ -36,12 +69,13 @@ if __name__ == "__main__":
                 img_namelist.append((racephoto_dir,filename))
 
 
-        print "Extracting bibs."
+        print("Extracting bibs.")
         for idx,image in enumerate(img_list):
             #Do Operation
-            print "======================================="
-            print "Processing Image: ", img_namelist[idx]
-            results.append(bt.findBibs(image,os.path.join(outfolder,img_namelist[idx][0],img_namelist[idx][1])))
+            print("=======================================")
+            print("Processing Image: ", img_namelist[idx])
+            results.append(bt.findbodies(image,os.path.join(outfolder,img_namelist[idx][0],img_namelist[idx][1])))
+            # results.append(bt.findBibs(image,os.path.join(outfolder,img_namelist[idx][0],img_namelist[idx][1])))
 
             for bib_number in results[len(results) - 1].bib_numbers:
                 if bib_number not in bib_index:
@@ -49,12 +83,12 @@ if __name__ == "__main__":
                 bib_index[bib_number].append(img_namelist[idx])
 
 
-    print "======================================="
-    print "FINAL STATS"
-    print "Faces:", sum(result.faces for result in results )
-    print "Bibs:", sum(result.bibs for result in results )
-    print "SWT:", sum(result.swt for result in results )
-    print "Bib Numbers:", sum(len(result.bib_numbers) for result in results )
+    print("=======================================")
+    print("FINAL STATS")
+    print("Faces:", sum(result.faces for result in results ))
+    print("Bibs:", sum(result.bibs for result in results ))
+    print("SWT:", sum(result.swt for result in results ))
+    print("Bib Numbers:", sum(len(result.bib_numbers) for result in results ))
     pprint.pprint(("Bib Index: ", bib_index), width=1)
 
         #make output directory

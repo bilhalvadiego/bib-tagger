@@ -1,7 +1,4 @@
-import cv2
-import os
 import numpy as np
-
 def getbodyboxes(image):
     #in: numpy image
     #out: list [(x,y,width,height)]
